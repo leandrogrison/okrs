@@ -1,0 +1,142 @@
+{
+  "objectives": [
+    {
+      "cycle": {
+        "id": "2Q2023",
+        "name": "2° Trimestre 2023"
+      },
+      "name": "Pesquisa de potenciais clientes para o produto X",
+      "category": {
+        "id": 0,
+        "name": "Objetivo da empresa"
+      },
+      "owner": {
+        "id": 1,
+        "name": "Fudêncio Maximus Trazeitus",
+        "photo": "https://randomuser.me/api/portraits/men/89.jpg"
+      },
+      "visibility": "public",
+      "startDate": "2023-04-01",
+      "deadline": "2023-06-30",
+      "endDate": null,
+      "finished": 0,
+      "id": "338afb87-9b59-4955-913f-e8cd981dd1ba",
+      "conclusionPercent": 0,
+      "description": "Fazer pesquisas online com usuários que utilizam os produtos da concorrência para captar as dores e necessidades deste público."
+    },
+    {
+      "cycle": {
+        "id": "2Q2023",
+        "name": "2° Trimestre 2023"
+      },
+      "name": "Obter 20 novos clientes Corporate no trimestre",
+      "category": {
+        "id": 0,
+        "name": "Objetivo da empresa"
+      },
+      "owner": {
+        "id": 2,
+        "name": "Firmina Tudentina",
+        "photo": "https://randomuser.me/api/portraits/women/62.jpg"
+      },
+      "supporters": [
+        {
+          "id": 0,
+          "name": "Credolfo Crenildo",
+          "photo": null
+        }
+      ],
+      "visibility": "public",
+      "startDate": "2023-04-01",
+      "deadline": "2023-06-30",
+      "endDate": null,
+      "finished": 0,
+      "id": "47fca600-2808-48b5-a4da-3eb8e2c516e7"
+    },
+    {
+      "cycle": {
+        "id": "2Q2023",
+        "name": "2° Trimestre 2023"
+      },
+      "name": "Levantamento da lista de leads atuais pela equipe Sales",
+      "category": {
+        "id": 1,
+        "name": "Objetivo do grupo"
+      },
+      "owner": {
+        "id": 2,
+        "name": "Firmina Tudentina",
+        "photo": "https://randomuser.me/api/portraits/women/62.jpg"
+      },
+      "visibility": "public",
+      "associate": {
+        "id": "47fca600-2808-48b5-a4da-3eb8e2c516e7",
+        "name": "Obter 20 novos clientes Corporate no trimestre"
+      },
+      "startDate": "2023-04-01",
+      "deadline": "2023-06-30",
+      "endDate": null,
+      "finished": 0,
+      "id": "db215773-d0a9-4b36-88e6-f2b67ce933dc",
+      "conclusionPercent": 0,
+      "description": "Verificar o total de leads do trimestre recebidos pelas nossas LP."
+    },
+    {
+      "cycle": {
+        "id": "2Q2023",
+        "name": "2° Trimestre 2023"
+      },
+      "name": "Gerar um excel com a lista de leads recebidos no último trimestre",
+      "owner": {
+        "id": 1,
+        "name": "Fudêncio Maximus Trazeitus",
+        "photo": "https://randomuser.me/api/portraits/men/89.jpg"
+      },
+      "category": {
+        "id": 2,
+        "name": "Objetivo individual"
+      },
+      "visibility": "public",
+      "associate": {
+        "id": "db215773-d0a9-4b36-88e6-f2b67ce933dc",
+        "name": "Levantamento da lista de leads atuais pela equipe Sales"
+      },
+      "startDate": "2023-04-01",
+      "deadline": "2023-06-30",
+      "endDate": null,
+      "finished": 0,
+      "id": "9c276dd1-8f1d-4524-8d59-77df89f283b6"
+    }
+  ],
+  "categories": [
+    {
+      "id": 0,
+      "name": "Objetivo da empresa"
+    },
+    {
+      "id": 1,
+      "name": "Objetivo do grupo"
+    },
+    {
+      "id": 2,
+      "name": "Objetivo individual"
+    }
+  ],
+  "users": [
+    {
+      "id": 0,
+      "name": "Credolfo Crenildo",
+      "photo": null
+    },
+    {
+      "id": 1,
+      "name": "Fudêncio Maximus Traseirus",
+      "photo": "https://randomuser.me/api/portraits/men/89.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Firmina Tudentina",
+      "photo": "https://randomuser.me/api/portraits/women/62.jpg"
+    }
+  ]
+}
