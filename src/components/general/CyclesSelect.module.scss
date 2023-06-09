@@ -1,0 +1,16 @@
+.cycles {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  .cycles-container {
+    overflow: auto;
+    scrollbar-width: none;
+    box-shadow: 0 0 1px inset rgba(0,0,0,.7);
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  .cycles-button-quarter {
+    white-space: nowrap;
+  }
+}
