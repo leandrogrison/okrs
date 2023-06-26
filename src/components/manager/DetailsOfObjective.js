@@ -6,14 +6,28 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
+import Button from '@mui/material/Button';
 
 import CloseIcon from '@mui/icons-material/Close';
+import AddIcon from '@mui/icons-material/Add';
+import ErrorOutlineOutlined from '@mui/icons-material/ErrorOutlineOutlined';
 
 import DrawerCustom from '../general/DrawerCustom';
+import DialogCreateKR from './DialogCreateKR';
 
 function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
 
   const [descriptionTruncate, setDescriptionTruncate] = useState(true)
+  const [KRToEdit, setKRToEdit] = useState({})
+
+  const [showDialogCreateKR, setShowDialogCreateKR] = useState(false);
+  const handleOpenDialogCreateKR = () => {
+    setKRToEdit({})
+    setShowDialogCreateKR(true);
+  };
+  const closeDialog = () => {
+    setShowDialogCreateKR(false);
+  };
 
   const closeDrawer = () => {
     opened = false
@@ -79,10 +93,30 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
                   ) 
                 }
               </Box> :
-              <Box sx={{ fontSize: 14 }}>Nenhum colaborador cadastrado</Box>
+              <Box sx={{ fontSize: 14 }}>Nenhum colaborador cadastrado.</Box>
             }
           </Box>
         </Grid>
+        <Box sx={{
+          my: 2,
+          borderTop: '1px solid',
+          borderColor: 'divider'
+        }}>
+          <Grid container sx={{ p: 2, display: 'flex', justifyContent: 'space-between' }}>
+            <Box sx={{ fontSize: 14, display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <ErrorOutlineOutlined color='warning' />
+              Nenhum KR criado.
+            </Box>
+            <Button onClick={handleOpenDialogCreateKR} startIcon={<AddIcon />} variant="contained" disableElevation>
+              Criar KR
+            </Button>
+          </Grid>
+        </Box>
+        <DialogCreateKR
+          opened={showDialogCreateKR}
+          KRToEdit={KRToEdit}
+          handleCloseDialog={closeDialog}
+        />
       </Box>
     }
     </DrawerCustom>
