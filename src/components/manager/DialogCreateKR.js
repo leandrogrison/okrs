@@ -43,17 +43,6 @@ import AddIcon from '@mui/icons-material/Add';
 
 import { UserContext } from '../user/UserAuth';
 
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  DropResult,
-  ResponderProvided,
-  DraggableProvided,
-  DroppableProvided,
-  DraggableStateSnapshot
-} from "react-beautiful-dnd";
-
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
@@ -119,7 +108,7 @@ TextMaskCustom.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-function DialogCreateKR({ opened, KRToEdit, handleCloseDialog, handleUpdateObjectives }) {
+function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handleUpdateObjectives }) {
 
   const [openDropdownOwner, setOpenDropdownOwner] = useState(false);
   const [users, setUsers] = useState([]);
@@ -128,16 +117,9 @@ function DialogCreateKR({ opened, KRToEdit, handleCloseDialog, handleUpdateObjec
   const [sendForm, setSendForm] = useState(false);
   const [message, setMessage] = useState({ show: false, type: null, text: ''});
   const [tasksFilled, setTasksFilled] = useState(false);
+  const [ownerOnCreate, setOwnerOnCreate] = useState(true);
   const loadingOwner = openDropdownOwner && users.length === 0;
   const userCurrent = useContext(UserContext);
-
-  const handleCloseSnackbar = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setMessage({ show: false, type: null, text: ''});
-  };
 
   const [kr, setKR] = useState({
     type: 'percent',
@@ -149,6 +131,14 @@ function DialogCreateKR({ opened, KRToEdit, handleCloseDialog, handleUpdateObjec
       }
     ]
   })
+  
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setMessage({ show: false, type: null, text: ''});
+  };
 
   useEffect(() => {
     if (opened && KRToEdit && Object.keys(KRToEdit).length > 0) {
@@ -159,7 +149,12 @@ function DialogCreateKR({ opened, KRToEdit, handleCloseDialog, handleUpdateObjec
       setKR(KRToEditClone)
       setOwnerMe(KRToEditClone.owner.id === userCurrent.id)
     }
-  },[KRToEdit, opened, userCurrent]);
+    if (opened && ownerOnCreate && KRToEdit && Object.keys(KRToEdit).length <= 0) {
+      setOwnerOnCreate(false)
+      setKR({ ...kr, owner: objective.owner })
+      setOwnerMe(objective.owner.id === userCurrent.id)
+    }
+  },[KRToEdit, opened, kr, objective, ownerOnCreate, userCurrent]);
 
   function getUsers() {
     fetch('http://localhost:5000/users', {
@@ -171,7 +166,6 @@ function DialogCreateKR({ opened, KRToEdit, handleCloseDialog, handleUpdateObjec
       .then((resp) => resp.json())
       .then((data) => {
         setUsers(data)
-        // setRemoveLoading(true)
       })
       .catch((err) => console.log(err))
   }
@@ -257,9 +251,17 @@ function DialogCreateKR({ opened, KRToEdit, handleCloseDialog, handleUpdateObjec
   }
 
   const handleClose = useCallback(() => {
-    // setKR({})
-    // setUsers([])
-    // setOwnerMe(false)
+    setKR({
+      type: 'percent',
+      tasks: [
+        {
+          id: uuidv4(),
+          name: '',
+          checked: false
+        }
+      ]
+    })
+    setOwnerOnCreate(true)
     handleCloseDialog()
   }, [handleCloseDialog]);
 

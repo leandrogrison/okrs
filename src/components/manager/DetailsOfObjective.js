@@ -115,6 +115,7 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
         <DialogCreateKR
           opened={showDialogCreateKR}
           KRToEdit={KRToEdit}
+          objective={objective}
           handleCloseDialog={closeDialog}
         />
       </Box>
