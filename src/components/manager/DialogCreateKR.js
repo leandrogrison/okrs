@@ -3,6 +3,24 @@ import { useState, useEffect, useContext, useCallback, forwardRef } from 'react'
 import moment from 'moment';
 import {v4 as uuidv4} from 'uuid'
 import { IMaskInput } from 'react-imask';
+import {
+  DndContext, 
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {
+  restrictToVerticalAxis,
+  restrictToParentElement
+} from '@dnd-kit/modifiers';
 
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
@@ -33,15 +51,14 @@ import MuiAlert from '@mui/material/Alert';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
-import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 
 import { UserContext } from '../user/UserAuth';
+
+import Task from './DialogCreateKRTask';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -140,6 +157,24 @@ function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handle
     setMessage({ show: false, type: null, text: ''});
   };
 
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  function handleDragEnd(event) {
+    const {active, over} = event;
+    
+    if (active && over && active.id !== over.id) {
+      let tasks = kr.tasks
+      const oldIndex = tasks.map(task => task.id).indexOf(active.id);
+      const newIndex = tasks.map(task => task.id).indexOf(over.id);
+      setKR({ ...kr, tasks: arrayMove(tasks, oldIndex, newIndex) })
+    }
+  }
+
   useEffect(() => {
     if (opened && KRToEdit && Object.keys(KRToEdit).length > 0) {
       let KRToEditClone = JSON.parse(JSON.stringify(KRToEdit))
@@ -198,7 +233,7 @@ function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handle
     setKR({ ...kr, tasks: tasks })
   }
 
-  const deleteTask = (taskId) => {
+  const handleDeleteTask = (taskId) => {
     let tasks = kr.tasks
     tasks = tasks.filter( task => task.id !== taskId)
     setKR({ ...kr, tasks: tasks })
@@ -522,43 +557,35 @@ function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handle
 
           <Typography sx={{ mt: 2, mb: 1, fontSize: 16 }}>Tarefas</Typography>
 
-          <List sx={{ bgcolor: 'background.paper' }}>
-            {kr.tasks.map((task) =>
-              <ListItem
-                key={task.id}
-                disablePadding
-                disableGutters
-                sx={{ mb: 2 }}
-              >
-                <TextField
-                  id={`${task.id}`}
-                  name={`${task.id}`}
-                  label="Nome da tarefa"
-                  variant="outlined"
-                  onChange={handleTasksChange}
-                  value={task.name || ''}
-                  fullWidth
-                  error={kr.hasOwnProperty('type') && kr.type === 'tasks' && !tasksFilled}
-                  helperText={kr.hasOwnProperty('type') && kr.type === 'tasks' && !tasksFilled && 'Informe ao menos uma tarefa.'}
-                />
-                <ListItemSecondaryAction sx={{ top: '4px', mt: 3 }}>
-                  <IconButton
-                    onClick={() => deleteTask(task.id)}
-                    disabled={kr.tasks.length < 2}
-                    aria-label="delete task"
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            )}
-          </List>
+          <DndContext
+            sensors={sensors}
+            modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <List sx={{ bgcolor: 'background.paper' }}>
+              <SortableContext items={kr.tasks} strategy={verticalListSortingStrategy}>
+                {kr.tasks.map((task) =>
+                  <Task
+                    key={task.id}
+                    id={task.id}
+                    task={task}
+                    kr={kr}
+                    tasksFilled={tasksFilled}
+                    handleDeleteTask={handleDeleteTask}
+                    handleTasksChange={handleTasksChange}
+                  />
+                )}
+              </SortableContext>
+            </List>
+          </DndContext>
 
           <Button
             onClick={addTask}
             variant="contained"
             disableElevation
             startIcon={<AddIcon />}
+            sx={{ ml: 4 }}
           >
             Adicionar tarefa
           </Button>
