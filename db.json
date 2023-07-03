@@ -196,6 +196,69 @@
       "conclusionPercent": 0
     }
   ],
+  "krs": [
+    {
+      "type": "percent",
+      "tasks": [
+        {
+          "id": "d05236b9-c04e-413f-95be-3cc4a9dcebfb",
+          "name": "",
+          "checked": false
+        }
+      ],
+      "krFromObjective": "338afb87-9b59-4955-913f-e8cd981dd1ba",
+      "owner": {
+        "id": 1,
+        "name": "Maurício Ribeiro Andrade",
+        "photo": "https://randomuser.me/api/portraits/men/89.jpg"
+      },
+      "name": "aDSADAsdasd",
+      "typePercent": 0,
+      "id": "263a0fda-0b97-465e-be40-e6fdd9e8b648"
+    },
+    {
+      "type": "value",
+      "tasks": [
+        {
+          "id": "9068d1c4-c423-4415-b9cd-f643b6b072c3",
+          "name": "",
+          "checked": false
+        }
+      ],
+      "krFromObjective": "338afb87-9b59-4955-913f-e8cd981dd1ba",
+      "owner": {
+        "id": 1,
+        "name": "Maurício Ribeiro Andrade",
+        "photo": "https://randomuser.me/api/portraits/men/89.jpg"
+      },
+      "name": "sssss",
+      "typeValue": 22222,
+      "typePercent": 0,
+      "id": "bf937b72-63ca-4f6b-9842-447361e25fd6"
+    },
+    {
+      "type": "value",
+      "tasks": [
+        {
+          "id": "47913fcc-c1ea-4867-817b-09566d796757",
+          "name": "",
+          "checked": false
+        }
+      ],
+      "krFromObjective": "338afb87-9b59-4955-913f-e8cd981dd1ba",
+      "owner": {
+        "id": 1,
+        "name": "Maurício Ribeiro Andrade",
+        "photo": "https://randomuser.me/api/portraits/men/89.jpg"
+      },
+      "name": "Com valor",
+      "typeValue": 2343.67,
+      "typeUnit": "R$",
+      "description": "descrição",
+      "typePercent": 0,
+      "id": "7ef9bfb2-597c-4b94-8dcc-cb2d7eb8c2ab"
+    }
+  ],
   "categories": [
     {
       "id": 0,

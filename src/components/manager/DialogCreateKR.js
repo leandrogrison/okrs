@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext, useCallback, forwardRef } from 'react'
 
-import moment from 'moment';
 import {v4 as uuidv4} from 'uuid'
 import { IMaskInput } from 'react-imask';
 import {
@@ -125,7 +124,7 @@ TextMaskCustom.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handleUpdateObjectives }) {
+function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handleUpdateKR }) {
 
   const [openDropdownOwner, setOpenDropdownOwner] = useState(false);
   const [users, setUsers] = useState([]);
@@ -134,7 +133,7 @@ function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handle
   const [sendForm, setSendForm] = useState(false);
   const [message, setMessage] = useState({ show: false, type: null, text: ''});
   const [tasksFilled, setTasksFilled] = useState(false);
-  const [ownerOnCreate, setOwnerOnCreate] = useState(true);
+  const [initialFieldsOnCreate, setInitialFieldsOnCreate] = useState(true);
   const loadingOwner = openDropdownOwner && users.length === 0;
   const userCurrent = useContext(UserContext);
 
@@ -184,12 +183,14 @@ function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handle
       setKR(KRToEditClone)
       setOwnerMe(KRToEditClone.owner.id === userCurrent.id)
     }
-    if (opened && ownerOnCreate && KRToEdit && Object.keys(KRToEdit).length <= 0) {
-      setOwnerOnCreate(false)
-      setKR({ ...kr, owner: objective.owner })
-      setOwnerMe(objective.owner.id === userCurrent.id)
+    if (opened && KRToEdit && Object.keys(KRToEdit).length <= 0) {
+      if (initialFieldsOnCreate) {
+        setInitialFieldsOnCreate(false)
+        setKR({ ...kr, krFromObjective: objective.id, owner: objective.owner })
+        setOwnerMe(objective.owner.id === userCurrent.id)
+      }
     }
-  },[KRToEdit, opened, kr, objective, ownerOnCreate, userCurrent]);
+  },[KRToEdit, opened, kr, objective, initialFieldsOnCreate, userCurrent]);
 
   function getUsers() {
     fetch('http://localhost:5000/users', {
@@ -279,6 +280,22 @@ function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handle
     if (!kr.hasOwnProperty('owner') || kr.owner.name.length === 0) {
       fieldsWithErrors.owner = {id: 0, name: '', photo: null}
     }
+
+    if (kr.hasOwnProperty('type')) {
+      if (kr.type === 'tasks' && !kr.tasks.find(task => task.name.length > 0)) {
+        fieldsWithErrors.tasks = [
+          {
+            id: uuidv4(),
+            name: '',
+            checked: false
+          }
+        ]
+        setTasksFilled(false)
+      }
+      if (kr.type === 'value' && (!kr.hasOwnProperty('typeValue') || kr.typeValue.length === 0)) {
+        fieldsWithErrors.typeValue = ''
+      }
+    }
     
     setKR({ ...kr, ...fieldsWithErrors })
 
@@ -296,7 +313,7 @@ function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handle
         }
       ]
     })
-    setOwnerOnCreate(true)
+    setInitialFieldsOnCreate(true)
     handleCloseDialog()
   }, [handleCloseDialog]);
 
@@ -305,14 +322,22 @@ function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handle
 
       setLoading(true)
       
-      let toUpdateObjective = KRToEdit.hasOwnProperty('id') ? `/${kr.id}` : ''
+      let toUpdateKR = KRToEdit.hasOwnProperty('id') ? `/${kr.id}` : ''
 
-      fetch("http://localhost:5000/objectives" + toUpdateObjective, {
-        method: toUpdateObjective.length > 0 ? 'PUT' : 'POST',
+      // ALTERAÇÃO NO FORMATO DO VALOR DEVIDO AO COMPONENTE DE MÁSCARA APLICADO NO CAMPO
+      let typeValueToConvert = {}
+      if (kr.typeValue) {
+        typeValueToConvert = {
+          typeValue: parseFloat(kr.typeValue.replaceAll('.', '').replaceAll(',', '.'))
+        }
+      }
+
+      fetch("http://localhost:5000/krs" + toUpdateKR, {
+        method: toUpdateKR.length > 0 ? 'PUT' : 'POST',
         headers: {
           'Content-type': 'application/json'
         },
-        body: JSON.stringify(kr)
+        body: JSON.stringify({ ...kr, ...typeValueToConvert })
       })
       .then((resp) => resp.json())
       .then((data) => {
@@ -323,17 +348,17 @@ function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handle
           setMessage({
             show: true,
             type: 'success',
-            text: 'Objetivo salvo com sucesso!'
+            text: 'KR salvo com sucesso!'
           });
         } else {
           setMessage({
             show: true,
             type: 'error',
-            text: 'Erro ao salvar objetivo, tente novamente mais tarde.'
+            text: 'Erro ao salvar KR, tente novamente mais tarde.'
           });
         }
         handleClose()
-        handleUpdateObjectives()
+        handleUpdateKR()
       })
       .catch((err) => {
         console.log(err)
@@ -346,27 +371,22 @@ function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handle
         });
       })
     }
-  }, [sendForm, kr, KRToEdit, handleClose, handleUpdateObjectives])
+  }, [sendForm, kr, KRToEdit, handleClose, handleUpdateKR])
 
-  const saveObjective = () => {
+  const saveKR = () => {
 
     if (validateForm()) return false
 
-    let otherFields = {}
+    let fieldsOnCreateKR = {}
 
     if (Object.keys(KRToEdit).length === 0) {
-      const quarter = kr.cycle.id.slice(0,1)
-      const year = kr.cycle.id.slice(-4)
-      otherFields = {
-        startDate: moment(year + '-01-01').quarter(quarter).startOf('quarter').format('YYYY-MM-DD'),
-        deadline: moment(year + '-01-01').quarter(quarter).endOf('quarter').format('YYYY-MM-DD'),
-        endDate: null,
-        finished: 0,
+      fieldsOnCreateKR = {
+        typePercent: 0,
         id: uuidv4()
       }
     }
 
-    setKR({ ...kr, ...otherFields })
+    setKR({ ...kr, ...fieldsOnCreateKR })
 
     setSendForm(true)
   }
@@ -601,7 +621,7 @@ function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handle
             Cancelar
           </Button>
           <LoadingButton
-            onClick={saveObjective}
+            onClick={saveKR}
             loading={loading}
             loadingPosition="start"
             startIcon={<CheckIcon />}

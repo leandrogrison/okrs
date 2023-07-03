@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
@@ -19,6 +19,17 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
 
   const [descriptionTruncate, setDescriptionTruncate] = useState(true)
   const [KRToEdit, setKRToEdit] = useState({})
+  const [loading, setLoading] = useState(true)
+
+  function getKRs() {
+    setLoading(true)
+  }
+
+  useEffect(() => {
+
+    if (!loading) return
+
+  })
 
   const [showDialogCreateKR, setShowDialogCreateKR] = useState(false);
   const handleOpenDialogCreateKR = () => {
@@ -117,6 +128,7 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
           KRToEdit={KRToEdit}
           objective={objective}
           handleCloseDialog={closeDialog}
+          handleUpdateKR={getKRs}
         />
       </Box>
     }
