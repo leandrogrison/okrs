@@ -95,14 +95,12 @@ function OKRsManager() {
     })
       .then((resp) => resp.json())
       .then((data) => {
-        let cyclePrev = ''
         let cyclesData = []
         const currentCycle = { id: moment().format('Q[Q]YYYY'), name: moment().format('Q[° Trimestre ]YYYY') }
         cyclesData.push(currentCycle)
         data.forEach((obj) => {
-          if (obj.cycle.id !== cyclePrev && obj.cycle.id !== currentCycle.id) {
+          if (!cyclesData.some((cycleData) => cycleData.id === obj.cycle.id)) {
             cyclesData.push(obj.cycle)
-            cyclePrev = obj.cycle.id
           }
         })
         const sortedCycles = cyclesData.sort((a,b) =>
