@@ -184,7 +184,7 @@
       },
       "owner": {
         "id": 1,
-        "name": "Fudêncio Maximus Trazeitus",
+        "name": "Maurício Ribeiro Andrade",
         "photo": "https://randomuser.me/api/portraits/men/89.jpg"
       },
       "visibility": "public",
@@ -194,6 +194,120 @@
       "finished": 0,
       "id": "23774360-63e0-47d8-b9c3-81ebd07a4101",
       "conclusionPercent": 0
+    },
+    {
+      "cycle": {
+        "id": "3Q2023",
+        "name": "3° Trimestre 2023"
+      },
+      "owner": {
+        "id": 1,
+        "name": "Maurício Ribeiro Andrade",
+        "photo": "https://randomuser.me/api/portraits/men/89.jpg"
+      },
+      "category": {
+        "id": 0,
+        "name": "Objetivo da empresa"
+      },
+      "name": "Expandir operações na região sudeste",
+      "supporters": [
+        {
+          "id": 0,
+          "name": "Luiz Albuquerque",
+          "photo": null
+        }
+      ],
+      "visibility": "public",
+      "startDate": "2023-07-01",
+      "deadline": "2023-09-30",
+      "endDate": null,
+      "finished": 0,
+      "id": "3012209d-27e7-405e-90ba-5a79051af462"
+    },
+    {
+      "cycle": {
+        "id": "3Q2023",
+        "name": "3° Trimestre 2023"
+      },
+      "name": "Promover campanhas direcionadas a clientes Corporate",
+      "owner": {
+        "id": 2,
+        "name": "Fernanda Mendonça",
+        "photo": "https://randomuser.me/api/portraits/women/62.jpg"
+      },
+      "category": {
+        "id": 1,
+        "name": "Objetivo do grupo"
+      },
+      "supporters": [
+        {
+          "id": 0,
+          "name": "Luiz Albuquerque",
+          "photo": null
+        }
+      ],
+      "visibility": "public",
+      "associate": {
+        "id": "3012209d-27e7-405e-90ba-5a79051af462",
+        "name": "Expandir operações na região sudeste"
+      },
+      "startDate": "2023-07-01",
+      "deadline": "2023-09-30",
+      "endDate": null,
+      "finished": 0,
+      "id": "3d544887-7e29-42a5-8ce9-10c4131ff986"
+    },
+    {
+      "cycle": {
+        "id": "3Q2023",
+        "name": "3° Trimestre 2023"
+      },
+      "category": {
+        "id": 2,
+        "name": "Objetivo individual"
+      },
+      "owner": {
+        "id": 1,
+        "name": "Maurício Ribeiro Andrade",
+        "photo": "https://randomuser.me/api/portraits/men/89.jpg"
+      },
+      "visibility": "public",
+      "associate": {
+        "id": "3d544887-7e29-42a5-8ce9-10c4131ff986",
+        "name": "Promover campanhas direcionadas a clientes Corporate"
+      },
+      "name": "Alcançar 5.000 novos usuários registrados.",
+      "startDate": "2023-07-01",
+      "deadline": "2023-09-30",
+      "endDate": null,
+      "finished": 0,
+      "id": "473d21ad-a565-4c48-a125-c7baa4bb8df0"
+    },
+    {
+      "cycle": {
+        "id": "3Q2023",
+        "name": "3° Trimestre 2023"
+      },
+      "name": "Reduzir a taxa de cancelamento em 10%.",
+      "category": {
+        "id": 2,
+        "name": "Objetivo individual"
+      },
+      "owner": {
+        "id": 2,
+        "name": "Fernanda Mendonça",
+        "photo": "https://randomuser.me/api/portraits/women/62.jpg"
+      },
+      "visibility": "public",
+      "associate": {
+        "id": "3d544887-7e29-42a5-8ce9-10c4131ff986",
+        "name": "Promover campanhas direcionadas a clientes Corporate"
+      },
+      "startDate": "2023-07-01",
+      "deadline": "2023-09-30",
+      "endDate": null,
+      "finished": 0,
+      "id": "38a1a27e-e128-4a06-a80b-0ceade2169b0"
     }
   ],
   "krs": [

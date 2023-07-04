@@ -3,7 +3,7 @@ export const UserContext = createContext()
 const UserAuthProvider = (props) => {
     const UserAuth = {
       "id": 1,
-      "name": "Fudêncio Maximus Trazeitus",
+      "name": "Maurício Ribeiro Andrade",
       "photo": "https://randomuser.me/api/portraits/men/89.jpg"
     }
     return (
