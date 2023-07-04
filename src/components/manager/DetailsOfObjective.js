@@ -7,10 +7,16 @@ import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import Button from '@mui/material/Button';
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import Slider from '@mui/material/Slider';
 
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import ErrorOutlineOutlined from '@mui/icons-material/ErrorOutlineOutlined';
+import InfoIcon from '@mui/icons-material/Info';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import DrawerCustom from '../general/DrawerCustom';
 import DialogCreateKR from './DialogCreateKR';
@@ -18,20 +24,64 @@ import DialogCreateKR from './DialogCreateKR';
 function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
 
   const [descriptionTruncate, setDescriptionTruncate] = useState(true)
+  const [KRs, setKRs] = useState([])
   const [KRToEdit, setKRToEdit] = useState({})
   const [loading, setLoading] = useState(true)
+  const [progress, setProgress] = useState([])
+  const [updateProgress, setUpdateProgress] = useState(Math.random())
 
+  const handleOpenDeleteConfirmation = (kr) => {
+    // setOpenDeleteConfirmation(true);
+  }
+
+  function getEachProgressOfKRs(data) {
+    setProgress(data.map((KR) => { return KR.progress }))
+  }
+  
   function getKRs() {
     setLoading(true)
   }
-
+  
   useEffect(() => {
 
     if (!loading) return
 
+    let endPoint = `?krFromObjective=${objective.id}`
+
+    fetch('http://localhost:5000/krs' + endPoint, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then((resp) => resp.json())
+      .then((data) => {
+        console.log(data)
+        setKRs(data)
+        getEachProgressOfKRs(data)
+        setLoading(false)
+      })
+      .catch((err) => {
+        console.log(err)
+        setLoading(false)
+      })
+
   })
 
+  const handleChangeProgress = (event, newValue) => {
+
+    let newProgress = progress
+    newProgress[parseFloat(event.target.name)] = newValue
+
+    setProgress(newProgress)
+    setUpdateProgress(Math.random())
+  };
+
   const [showDialogCreateKR, setShowDialogCreateKR] = useState(false);
+  const handleOpenDialogEditKR = (kr) => {
+    // setKRToEdit(kr)
+    // setShowDialogCreateKR(true);
+  }
   const handleOpenDialogCreateKR = () => {
     setKRToEdit({})
     setShowDialogCreateKR(true);
@@ -115,13 +165,75 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
         }}>
           <Grid container sx={{ p: 2, display: 'flex', justifyContent: 'space-between' }}>
             <Box sx={{ fontSize: 14, display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <ErrorOutlineOutlined color='warning' />
-              Nenhum KR criado.
+            {
+              KRs.length > 0 ?
+              <>
+                {KRs.length} KR{KRs.length > 1 && 's'} encontrado{KRs.length > 1 && 's'}
+              </> :
+              <>
+                <ErrorOutlineOutlined color='warning' />
+                Nenhum KR criado.
+              </>
+              }
             </Box>
             <Button onClick={handleOpenDialogCreateKR} startIcon={<AddIcon />} variant="contained" disableElevation>
               Criar KR
             </Button>
           </Grid>
+          {
+            KRs.length > 0 &&
+            <List>
+              {KRs.map((kr, index) =>
+                <ListItem
+                  key={kr.id}
+                  id={kr.id}
+                  sx={{ mb: 2 }}
+                >
+                  <Grid container xs>
+                    <Grid sx={{ mr: 1 }}>
+                      <Tooltip title={kr.owner.name} placement="top">
+                        <Avatar alt={kr.owner.name} src={kr.owner.photo} sx={{ width: 24, height: 24 }} />
+                      </Tooltip>
+                    </Grid>
+                    <Grid xs>
+                      {kr.name}
+                      {kr.description && kr.description.length > 0 &&
+                        <Tooltip title={kr.description} placement="top">
+                          <InfoIcon fontSize="small" sx={{ ml: 1, verticalAlign: 'top' }} />
+                        </Tooltip>
+                      }
+                      <Grid container sx={{ width: '100%', alignItems: 'flex-end' }}>
+                        <Grid xs sx={{ pr: 2 }}>
+                          <Slider
+                            value={typeof progress[index] === 'number' ? progress[index] : 0}
+                            onChange={handleChangeProgress}
+                            name={`${index}`}
+                            aria-label="Default"
+                          />
+                        </Grid>
+                        <Grid sx={{ alignSelf: 'center', pr: 1, textAlign: 'right' }} width={50} key={updateProgress}>
+                          {progress[index]}%
+                        </Grid>
+                        <Grid>
+                          <Tooltip title="Editar KR" placement="top">
+                            <IconButton onClick={handleOpenDialogEditKR(kr)} aria-label="Editar KR">
+                              <EditIcon />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Excluir KR" placement="top">
+                            <IconButton onClick={handleOpenDeleteConfirmation(kr)} aria-label="Excluir KR">
+                              <DeleteIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </Grid>
+                      </Grid>
+                      
+                    </Grid>
+                  </Grid>
+                </ListItem>
+              )}
+            </List>
+          }
         </Box>
         <DialogCreateKR
           opened={showDialogCreateKR}

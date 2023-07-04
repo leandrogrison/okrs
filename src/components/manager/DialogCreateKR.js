@@ -382,6 +382,7 @@ function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handle
     if (Object.keys(KRToEdit).length === 0) {
       fieldsOnCreateKR = {
         typePercent: 0,
+        progress: 0,
         id: uuidv4()
       }
     }

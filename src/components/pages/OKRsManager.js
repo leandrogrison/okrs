@@ -477,6 +477,7 @@ function OKRsManager() {
       </Grid>
 
       <DetailsOfObjective
+        key={detailsOfObjective.id}
         opened={showDetailsOfObjective}
         objective={detailsOfObjective}
         handleCloseDrawer={closeDrawer}
