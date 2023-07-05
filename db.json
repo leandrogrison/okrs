@@ -313,13 +313,6 @@
   "krs": [
     {
       "type": "percent",
-      "tasks": [
-        {
-          "id": "d05236b9-c04e-413f-95be-3cc4a9dcebfb",
-          "name": "",
-          "checked": false
-        }
-      ],
       "krFromObjective": "338afb87-9b59-4955-913f-e8cd981dd1ba",
       "owner": {
         "id": 1,
@@ -333,13 +326,6 @@
     },
     {
       "type": "value",
-      "tasks": [
-        {
-          "id": "9068d1c4-c423-4415-b9cd-f643b6b072c3",
-          "name": "",
-          "checked": false
-        }
-      ],
       "krFromObjective": "338afb87-9b59-4955-913f-e8cd981dd1ba",
       "owner": {
         "id": 1,
@@ -357,7 +343,7 @@
       "tasks": [
         {
           "id": "47913fcc-c1ea-4867-817b-09566d796757",
-          "name": "",
+          "name": "Envio das pesquisas para o público selecionado.",
           "checked": false
         }
       ],

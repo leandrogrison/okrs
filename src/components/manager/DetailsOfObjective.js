@@ -10,6 +10,8 @@ import Button from '@mui/material/Button';
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import Slider from '@mui/material/Slider';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
@@ -29,6 +31,15 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
   const [loading, setLoading] = useState(true)
   const [progress, setProgress] = useState([])
   const [updateProgress, setUpdateProgress] = useState(Math.random())
+  const [updateTasks, setUpdateTasks] = useState(Math.random())
+
+  const handleCheckTask = (indexKR, indexTask) => (event) => {
+    let KRsToCheck = KRs
+    KRsToCheck[indexKR].tasks[indexTask].checked = event.target.checked
+
+    setKRs(KRsToCheck)
+    setUpdateTasks(Math.random())
+  }
 
   const handleOpenDeleteConfirmation = (kr) => {
     // setOpenDeleteConfirmation(true);
@@ -44,7 +55,7 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
   
   useEffect(() => {
 
-    if (!loading) return
+    if (!opened || !loading) return
 
     let endPoint = `?krFromObjective=${objective.id}`
 
@@ -56,7 +67,6 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
     })
       .then((resp) => resp.json())
       .then((data) => {
-        console.log(data)
         setKRs(data)
         getEachProgressOfKRs(data)
         setLoading(false)
@@ -183,7 +193,7 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
           {
             KRs.length > 0 &&
             <List>
-              {KRs.map((kr, index) =>
+              {KRs.map((kr, indexKR) =>
                 <ListItem
                   key={kr.id}
                   id={kr.id}
@@ -205,14 +215,14 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
                       <Grid container sx={{ width: '100%', alignItems: 'flex-end' }}>
                         <Grid xs sx={{ pr: 2 }}>
                           <Slider
-                            value={typeof progress[index] === 'number' ? progress[index] : 0}
+                            value={typeof progress[indexKR] === 'number' ? progress[indexKR] : 0}
                             onChange={handleChangeProgress}
-                            name={`${index}`}
+                            name={`${indexKR}`}
                             aria-label="Default"
                           />
                         </Grid>
                         <Grid sx={{ alignSelf: 'center', pr: 1, textAlign: 'right' }} width={50} key={updateProgress}>
-                          {progress[index]}%
+                          {progress[indexKR]}%
                         </Grid>
                         <Grid>
                           <Tooltip title="Editar KR" placement="top">
@@ -227,7 +237,31 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
                           </Tooltip>
                         </Grid>
                       </Grid>
-                      
+                      {kr.tasks && kr.tasks.length > 0 &&
+                        <>
+                          <Typography fontSize={12}>{kr.tasks.length} tarefa{kr.tasks.length > 1 && 's'}</Typography>
+                          <List dense>
+                            {
+                              kr.tasks.map((task, indexTask) => 
+                                <ListItem key={task.id}>
+                                  <FormControlLabel
+                                    label={task.name}
+                                    sx={{ marginLeft: -2 }}
+                                    control={
+                                      <Checkbox
+                                        edge="start"
+                                        checked={task.checked}
+                                        onChange={handleCheckTask(indexKR, indexTask)}
+                                        key={updateTasks}
+                                      />
+                                    }
+                                  />
+                                </ListItem>
+                              )
+                            }
+                          </List>
+                        </>
+                      }
                     </Grid>
                   </Grid>
                 </ListItem>
