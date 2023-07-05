@@ -2,6 +2,8 @@
 
 Este é um projeto pessoal que tem como finalidade aperfeiçoar meus conhecimentos em React JS, também é destinado a ser um portfólio para apresentação de minhas habilitades técnicas, não só com React, mas também em HTML, SCSS, Material UI, responsividade, estruturação de aplicações, usabilidade e performance.
 
+O projeto escolhido para estudos foi em criar um aplicativo/sistema web baseado na metologia de OKRs, onde o usuário poderá criar, gerenciar e analisar os objetivos e KRs de sua empresa.
+
 ## Como executar este projeto
 
 Baixe o projeto para seu ambiente local e instale as dependências:
