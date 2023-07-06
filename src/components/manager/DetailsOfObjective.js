@@ -104,7 +104,7 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
   return (
     <DrawerCustom opened={opened}>
     {opened &&
-      <Box sx={{ maxWidth: '420px', width: '420px' }}>
+      <Box sx={{ width: '100%' }}>
         <Grid container sx={{ p: 2, pr: 6 }}>
           <Typography sx={{ m: 0, py: 0, fontSize: 20 }}>{objective.name}</Typography>
           <Grid sx={{ width: '56px' }}>

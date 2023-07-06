@@ -4,11 +4,14 @@
   right: 0;
   bottom: 0;
   background: #fff;
-  width: 420px;
+  max-width: 420px;
+  width: 100%;
   z-index: 16;
   box-shadow: 0 0 24px rgba(0,0,0,.33);
   transition: 0.4s;
   transform: translateX(150%);
+  overflow: hidden;
+  overflow-y: auto;
   &.show-drawer {
     transform: translateX(0);
   }
