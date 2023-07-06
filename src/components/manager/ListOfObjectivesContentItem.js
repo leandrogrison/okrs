@@ -1,4 +1,5 @@
 import moment from 'moment/moment';
+import axios from 'axios';
 import { useEffect, useState, useCallback, useMemo } from "react"
 import styles from './ListOfObjectivesContentItem.module.scss'
 
@@ -136,17 +137,11 @@ function ListOfObjectivesContentItem({ objective, handleUpdateObjectives, handle
   }
 
   const deleteObjective = useCallback((objectiveToDelete) => {
-    fetch(`http://localhost:5000/objectives/${objectiveToDelete.id}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then((resp) => resp.json())
-    .then((data) => {
+    axios.delete(`http://localhost:5000/objectives/${objectiveToDelete.id}`)
+    .then(() => {
       setDeletedObjectives(deletedObjectives + 1)
     })
-    .catch((err) => {
+    .catch(() => {
       setNotDeletedObjectives(notDeletedObjectives + 1)
     })
   }, [deletedObjectives, notDeletedObjectives])

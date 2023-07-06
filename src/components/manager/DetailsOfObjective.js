@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import { useState, useEffect } from 'react'
 
 import IconButton from '@mui/material/IconButton';
@@ -59,20 +61,14 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
 
     let endPoint = `?krFromObjective=${objective.id}`
 
-    fetch('http://localhost:5000/krs' + endPoint, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then((resp) => resp.json())
-      .then((data) => {
-        setKRs(data)
-        getEachProgressOfKRs(data)
+    axios.get('http://localhost:5000/krs' + endPoint)
+      .then((response) => {
+        setKRs(response.data)
+        getEachProgressOfKRs(response.data)
         setLoading(false)
       })
-      .catch((err) => {
-        console.log(err)
+      .catch((response) => {
+        console.log(response.err)
         setLoading(false)
       })
 

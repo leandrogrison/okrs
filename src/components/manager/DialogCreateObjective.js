@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import { useState, useEffect, useContext, useCallback, forwardRef } from 'react'
 
 import moment from 'moment';
@@ -144,19 +146,13 @@ function DialogCreateObjective({ opened, objectToEdit, handleCloseDialog, handle
     }
 
     (async () => {
-      await fetch('http://localhost:5000/objectives', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-        .then((resp) => resp.json())
-        .then((data) => {
+      await axios.get('http://localhost:5000/objectives')
+        .then((response) => {
           if (active) {
-            listObjectivesToAssociate(data)
+            listObjectivesToAssociate(response.data)
           }
         })
-        .catch((err) => console.log(err))
+        .catch((response) => console.log(response.err))
     })();
 
     return () => {
@@ -173,33 +169,20 @@ function DialogCreateObjective({ opened, objectToEdit, handleCloseDialog, handle
 
   useEffect(() => {
 
-    fetch('http://localhost:5000/categories', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then((resp) => resp.json())
-      .then((data) => {
-        setCategories(data)
+    axios.get('http://localhost:5000/categories')
+      .then((response) => {
+        setCategories(response.data)
       })
-      .catch((err) => console.log(err))
+      .catch((response) => console.log(response.err))
 
   }, []);
 
   function getUsers() {
-    fetch('http://localhost:5000/users', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then((resp) => resp.json())
-      .then((data) => {
-        setUsers(data)
-        // setRemoveLoading(true)
+    axios.get('http://localhost:5000/users')
+      .then((response) => {
+        setUsers(response.data)
       })
-      .catch((err) => console.log(err))
+      .catch((response) => console.log(response.err))
   }
 
   useEffect(() => {
@@ -324,19 +307,11 @@ function DialogCreateObjective({ opened, objectToEdit, handleCloseDialog, handle
       
       let toUpdateObjective = objectToEdit.hasOwnProperty('id') ? `/${objective.id}` : ''
 
-      fetch("http://localhost:5000/objectives" + toUpdateObjective, {
-        method: toUpdateObjective.length > 0 ? 'PUT' : 'POST',
-        headers: {
-          'Content-type': 'application/json'
-        },
-        body: JSON.stringify(objective)
-      })
-      .then((resp) => resp.json())
-      .then((data) => {
+      axios[toUpdateObjective.length > 0 ? 'put' : 'post']("http://localhost:5000/objectives" + toUpdateObjective, objective)
+      .then((response) => {
         setLoading(false)
         setSendForm(false)
-        if (Object.keys(data).length) {
-          console.log(data)
+        if (Object.keys(response.data).length) {
           setMessage({
             show: true,
             type: 'success',
@@ -352,8 +327,8 @@ function DialogCreateObjective({ opened, objectToEdit, handleCloseDialog, handle
         handleClose()
         handleUpdateObjectives()
       })
-      .catch((err) => {
-        console.log(err)
+      .catch((response) => {
+        console.log(response.err)
         setLoading(false)
         setSendForm(false)
         setMessage({

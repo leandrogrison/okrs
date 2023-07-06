@@ -1,5 +1,6 @@
 import moment from 'moment/moment';
 import { useState, useEffect, forwardRef, useContext } from 'react'
+import axios from 'axios';
 
 // MATERIAL UI
 import Grid from '@mui/material/Unstable_Grid2';
@@ -87,18 +88,12 @@ function OKRsManager() {
 
     if (!loadingCycles) return
 
-    fetch('http://localhost:5000/objectives', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then((resp) => resp.json())
-      .then((data) => {
+    axios.get('http://localhost:5000/objectives')
+      .then((response) => {
         let cyclesData = []
         const currentCycle = { id: moment().format('Q[Q]YYYY'), name: moment().format('Q[° Trimestre ]YYYY') }
         cyclesData.push(currentCycle)
-        data.forEach((obj) => {
+        response.data.forEach((obj) => {
           if (!cyclesData.some((cycleData) => cycleData.id === obj.cycle.id)) {
             cyclesData.push(obj.cycle)
           }
@@ -110,7 +105,7 @@ function OKRsManager() {
         setCycleSelected(sortedCycles.length > 0 && cycleSelected === '' ? sortedCycles[0].id : cycleSelected)
         setLoadingCycles(false)
       })
-      .catch((err) => console.log(err))
+      .catch((response) => console.log(response.err))
   }, [loadingCycles, cycles, cycleSelected])
 
   function getObjectives() {
@@ -221,14 +216,8 @@ function OKRsManager() {
     if (searchOwnerMe) endPoint = endPoint + 'owner.id=' + userCurrent.id + '&'
     if (searchSupportMe) endPoint = endPoint + 'supporters_like&'
 
-    fetch('http://localhost:5000/objectives' + endPoint, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then((resp) => resp.json())
-      .then((data) => {
+    axios.get('http://localhost:5000/objectives' + endPoint)
+      .then((response) => {
         if (
           (searchValue && searchValue.length > 0) ||
           searchCompanyObjectives ||
@@ -241,25 +230,25 @@ function OKRsManager() {
           searchOutTime
         ) {
           if (searchSupportMe) {
-            data = data.filter(obj => 
+            response.data = response.data.filter(obj => 
               obj.supporters.some(supporter => supporter.id === userCurrent.id)
             )
           }
           if (searchOnTime || searchAlert || searchOutTime) {
             const status = [searchOnTime && 'on-time', searchAlert && 'alert', searchOutTime && 'out-time']
-            data = data.filter(obj => 
+            response.data = response.data.filter(obj => 
               getProgressStatus(obj) === status[0] ||
               getProgressStatus(obj) === status[1] ||
               getProgressStatus(obj) === status[2])
           }
-          setObjectives(data)
+          setObjectives(response.data)
         } else {
-          setObjectives(mountAssociates(data))
+          setObjectives(mountAssociates(response.data))
         }
         setLoading(false)
       })
-      .catch((err) => {
-        console.log(err)
+      .catch((response) => {
+        console.log(response.err)
         setLoading(false)
       })
 

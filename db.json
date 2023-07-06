@@ -174,29 +174,6 @@
     },
     {
       "cycle": {
-        "id": "2Q2023",
-        "name": "2° Trimestre 2023"
-      },
-      "name": "teste",
-      "category": {
-        "id": 0,
-        "name": "Objetivo da empresa"
-      },
-      "owner": {
-        "id": 1,
-        "name": "Maurício Ribeiro Andrade",
-        "photo": "https://randomuser.me/api/portraits/men/89.jpg"
-      },
-      "visibility": "public",
-      "startDate": "2023-04-01",
-      "deadline": "2023-06-30",
-      "endDate": null,
-      "finished": 0,
-      "id": "23774360-63e0-47d8-b9c3-81ebd07a4101",
-      "conclusionPercent": 0
-    },
-    {
-      "cycle": {
         "id": "3Q2023",
         "name": "3° Trimestre 2023"
       },
@@ -360,6 +337,26 @@
       "typePercent": 0,
       "id": "7ef9bfb2-597c-4b94-8dcc-cb2d7eb8c2ab",
       "progress": 0
+    },
+    {
+      "type": "percent",
+      "tasks": [
+        {
+          "id": "3544f3c2-fce4-4aca-ad01-421be036e2ee",
+          "name": "",
+          "checked": false
+        }
+      ],
+      "krFromObjective": "338afb87-9b59-4955-913f-e8cd981dd1ba",
+      "owner": {
+        "id": 1,
+        "name": "Maurício Ribeiro Andrade",
+        "photo": "https://randomuser.me/api/portraits/men/89.jpg"
+      },
+      "name": "Apresentar resultados para os stakeholders",
+      "typePercent": 0,
+      "progress": 0,
+      "id": "89fa80c1-c2a5-4b9d-ab4d-5534e4603c96"
     }
   ],
   "categories": [

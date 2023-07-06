@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import { useState, useEffect, useContext, useCallback, forwardRef } from 'react'
 
 import {v4 as uuidv4} from 'uuid'
@@ -193,17 +195,11 @@ function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handle
   },[KRToEdit, opened, kr, objective, initialFieldsOnCreate, userCurrent]);
 
   function getUsers() {
-    fetch('http://localhost:5000/users', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then((resp) => resp.json())
-      .then((data) => {
-        setUsers(data)
+    axios.get('http://localhost:5000/users')
+      .then((response) => {
+        setUsers(response.data)
       })
-      .catch((err) => console.log(err))
+      .catch((response) => console.log(response.err))
   }
 
   useEffect(() => {
@@ -332,19 +328,11 @@ function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handle
         }
       }
 
-      fetch("http://localhost:5000/krs" + toUpdateKR, {
-        method: toUpdateKR.length > 0 ? 'PUT' : 'POST',
-        headers: {
-          'Content-type': 'application/json'
-        },
-        body: JSON.stringify({ ...kr, ...typeValueToConvert })
-      })
-      .then((resp) => resp.json())
-      .then((data) => {
+      axios[toUpdateKR.length > 0 ? 'put' : 'post']("http://localhost:5000/krs" + toUpdateKR, { ...kr, ...typeValueToConvert })
+      .then((response) => {
         setLoading(false)
         setSendForm(false)
-        if (Object.keys(data).length) {
-          console.log(data)
+        if (Object.keys(response.data).length) {
           setMessage({
             show: true,
             type: 'success',
@@ -360,8 +348,8 @@ function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handle
         handleClose()
         handleUpdateKR()
       })
-      .catch((err) => {
-        console.log(err)
+      .catch((response) => {
+        console.log(response.err)
         setLoading(false)
         setSendForm(false)
         setMessage({
