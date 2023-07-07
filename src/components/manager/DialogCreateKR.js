@@ -177,20 +177,29 @@ function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handle
   }
 
   useEffect(() => {
-    if (opened && KRToEdit && Object.keys(KRToEdit).length > 0) {
-      let KRToEditClone = JSON.parse(JSON.stringify(KRToEdit))
-      if (KRToEdit.children) {
-        delete KRToEditClone.children
+    if (opened && initialFieldsOnCreate) {
+      if (KRToEdit && Object.keys(KRToEdit).length > 0) {
+        let KRToEditClone = JSON.parse(JSON.stringify(KRToEdit))
+        if (KRToEditClone.type === 'value') {
+          KRToEditClone.typeValue = String(KRToEditClone.typeValue).replaceAll('.', ',')
+        }
+        if (!KRToEditClone.tasks || KRToEditClone.tasks.length === 0) {
+          KRToEditClone['tasks'] = [
+            {
+              id: uuidv4(),
+              name: '',
+              checked: false
+            }
+          ]
+        }
+        setKR(KRToEditClone)
+        setOwnerMe(KRToEditClone.owner.id === userCurrent.id)
       }
-      setKR(KRToEditClone)
-      setOwnerMe(KRToEditClone.owner.id === userCurrent.id)
-    }
-    if (opened && KRToEdit && Object.keys(KRToEdit).length <= 0) {
-      if (initialFieldsOnCreate) {
-        setInitialFieldsOnCreate(false)
+      if (KRToEdit && Object.keys(KRToEdit).length <= 0) {
         setKR({ ...kr, krFromObjective: objective.id, owner: objective.owner })
         setOwnerMe(objective.owner.id === userCurrent.id)
       }
+      setInitialFieldsOnCreate(false)
     }
   },[KRToEdit, opened, kr, objective, initialFieldsOnCreate, userCurrent]);
 
@@ -328,7 +337,18 @@ function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handle
         }
       }
 
-      axios[toUpdateKR.length > 0 ? 'put' : 'post']("http://localhost:5000/krs" + toUpdateKR, { ...kr, ...typeValueToConvert })
+      let onlyTasksFilled = {tasks: []}
+      kr.tasks.forEach((task) => {
+        if (task.name.length > 0) {
+          onlyTasksFilled.tasks.push(task)
+        }
+      })
+
+      axios[toUpdateKR.length > 0 ? 'put' : 'post']("http://localhost:5000/krs" + toUpdateKR, {
+        ...kr,
+        ...typeValueToConvert,
+        ...onlyTasksFilled
+      })
       .then((response) => {
         setLoading(false)
         setSendForm(false)

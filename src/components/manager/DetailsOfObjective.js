@@ -85,8 +85,8 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
 
   const [showDialogCreateKR, setShowDialogCreateKR] = useState(false);
   const handleOpenDialogEditKR = (kr) => {
-    // setKRToEdit(kr)
-    // setShowDialogCreateKR(true);
+    setKRToEdit(kr)
+    setShowDialogCreateKR(true);
   }
   const handleOpenDialogCreateKR = () => {
     setKRToEdit({})
@@ -222,7 +222,7 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
                         </Grid>
                         <Grid>
                           <Tooltip title="Editar KR" placement="top">
-                            <IconButton onClick={handleOpenDialogEditKR(kr)} aria-label="Editar KR">
+                            <IconButton onClick={() => handleOpenDialogEditKR(kr)} aria-label="Editar KR">
                               <EditIcon />
                             </IconButton>
                           </Tooltip>

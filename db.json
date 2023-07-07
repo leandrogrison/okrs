@@ -299,7 +299,8 @@
       "name": "Levantamento de clientes potenciais",
       "typePercent": 0,
       "id": "263a0fda-0b97-465e-be40-e6fdd9e8b648",
-      "progress": 0
+      "progress": 0,
+      "tasks": []
     },
     {
       "type": "value",
@@ -313,7 +314,8 @@
       "typeValue": 22222,
       "typePercent": 0,
       "id": "bf937b72-63ca-4f6b-9842-447361e25fd6",
-      "progress": 0
+      "progress": 0,
+      "tasks": []
     },
     {
       "type": "value",
@@ -340,13 +342,7 @@
     },
     {
       "type": "percent",
-      "tasks": [
-        {
-          "id": "3544f3c2-fce4-4aca-ad01-421be036e2ee",
-          "name": "",
-          "checked": false
-        }
-      ],
+      "tasks": [],
       "krFromObjective": "338afb87-9b59-4955-913f-e8cd981dd1ba",
       "owner": {
         "id": 1,
