@@ -14,6 +14,12 @@ import ListItem from '@mui/material/ListItem'
 import Slider from '@mui/material/Slider';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContentText from '@mui/material/DialogContentText'
+import LoadingButton from '@mui/lab/LoadingButton';
 
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
@@ -21,11 +27,12 @@ import ErrorOutlineOutlined from '@mui/icons-material/ErrorOutlineOutlined';
 import InfoIcon from '@mui/icons-material/Info';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SaveIcon from '@mui/icons-material/Save';
 
 import DrawerCustom from '../general/DrawerCustom';
 import DialogCreateKR from './DialogCreateKR';
 
-function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
+function DetailsOfObjective({opened, objective, handleCloseDrawer, handleShowMessage}) {
 
   const [descriptionTruncate, setDescriptionTruncate] = useState(true)
   const [KRs, setKRs] = useState([])
@@ -34,6 +41,9 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
   const [progress, setProgress] = useState([])
   const [updateProgress, setUpdateProgress] = useState(Math.random())
   const [updateTasks, setUpdateTasks] = useState(Math.random())
+  const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false)
+  const [KRToDelete, setKRToDelete] = useState({})
+  const [confirmedDeleteKR, setConfirmedDeleteKR] = useState(false)
 
   const handleCheckTask = (indexKR, indexTask) => (event) => {
     let KRsToCheck = KRs
@@ -44,8 +54,32 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
   }
 
   const handleOpenDeleteConfirmation = (kr) => {
-    // setOpenDeleteConfirmation(true);
+    setKRToDelete(kr)
+    setOpenDeleteConfirmation(true);
   }
+
+  const handleCloseDeleteConfirmation = () => {
+    setKRToDelete({})
+    setOpenDeleteConfirmation(false);
+    setConfirmedDeleteKR(false);
+  }
+
+  useEffect(() => {
+    if (!confirmedDeleteKR) return
+
+    axios.delete(`http://localhost:5000/krs/${KRToDelete.id}`)
+    .then(() => {
+      let KRsWithoutDeleted = KRs.filter( KR => KR.id !== KRToDelete.id )
+      setKRs(KRsWithoutDeleted)
+      getEachProgressOfKRs(KRsWithoutDeleted)
+      handleShowMessage({ show: true, type: 'success', text: `KR excluído com sucesso!`});
+      handleCloseDeleteConfirmation();
+    })
+    .catch(() => {
+      handleShowMessage({ show: true, type: 'error', text: `Erro ao excluir KR, tente novamente mais tarde.`});
+      handleCloseDeleteConfirmation();
+    })
+  })
 
   function getEachProgressOfKRs(data) {
     setProgress(data.map((KR) => { return KR.progress }))
@@ -227,7 +261,7 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
                             </IconButton>
                           </Tooltip>
                           <Tooltip title="Excluir KR" placement="top">
-                            <IconButton onClick={handleOpenDeleteConfirmation(kr)} aria-label="Excluir KR">
+                            <IconButton onClick={() => handleOpenDeleteConfirmation(kr)} aria-label="Excluir KR">
                               <DeleteIcon />
                             </IconButton>
                           </Tooltip>
@@ -265,6 +299,7 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
             </List>
           }
         </Box>
+
         <DialogCreateKR
           opened={showDialogCreateKR}
           KRToEdit={KRToEdit}
@@ -272,6 +307,39 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer}) {
           handleCloseDialog={closeDialog}
           handleUpdateKR={getKRs}
         />
+
+        <Dialog
+          open={openDeleteConfirmation}
+          onClose={handleCloseDeleteConfirmation}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Deseja excluir este KR?"}
+          </DialogTitle>
+          <DialogContent>
+            {(KRToDelete.progress > 0) &&
+              <DialogContentText id="alert-dialog-description">
+                <strong>Importante: </strong>
+                O percentual de conclusão deste KR já foi alterado, portanto, a exclusão deste KR irá alterar o percentual de conclusão do objetivo.
+              </DialogContentText>
+            }
+          </DialogContent>
+          <DialogActions sx={{ p: 2 }}>
+            <Button onClick={handleCloseDeleteConfirmation}>Cancelar</Button>
+            {confirmedDeleteKR
+              ?
+                <LoadingButton loading variant="contained" loadingPosition="start" startIcon={<SaveIcon />}>
+                  Excluindo...
+                </LoadingButton>
+              :
+                <Button onClick={() => setConfirmedDeleteKR(true)} variant="contained" color="error" autoFocus>
+                  Excluir
+                </Button>
+            }
+          </DialogActions>
+        </Dialog>
+
       </Box>
     }
     </DrawerCustom>

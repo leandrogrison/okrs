@@ -314,7 +314,7 @@
       "typeValue": 22222,
       "typePercent": 0,
       "id": "bf937b72-63ca-4f6b-9842-447361e25fd6",
-      "progress": 0,
+      "progress": 25,
       "tasks": []
     },
     {
@@ -353,6 +353,33 @@
       "typePercent": 0,
       "progress": 0,
       "id": "89fa80c1-c2a5-4b9d-ab4d-5534e4603c96"
+    },
+    {
+      "type": "percent",
+      "krFromObjective": "3012209d-27e7-405e-90ba-5a79051af462",
+      "owner": {
+        "id": 1,
+        "name": "Maurício Ribeiro Andrade",
+        "photo": "https://randomuser.me/api/portraits/men/89.jpg"
+      },
+      "name": "Estruturar equipe de suporte e atendimento",
+      "typePercent": 0,
+      "progress": 25,
+      "id": "6325a4e5-cfe4-4bf3-9d2e-192101e99097"
+    },
+    {
+      "type": "percent",
+      "krFromObjective": "3012209d-27e7-405e-90ba-5a79051af462",
+      "owner": {
+        "id": 2,
+        "name": "Fernanda Mendonça",
+        "photo": "https://randomuser.me/api/portraits/women/62.jpg"
+      },
+      "name": "Notificar clientes referente ao novo atendimento para a região sudeste",
+      "typePercent": 0,
+      "progress": 0,
+      "id": "a62f91df-6fe1-4d13-8dc0-a09630bc7fe5",
+      "tasks": []
     }
   ],
   "categories": [

@@ -470,6 +470,7 @@ function OKRsManager() {
         opened={showDetailsOfObjective}
         objective={detailsOfObjective}
         handleCloseDrawer={closeDrawer}
+        handleShowMessage={showMessage}
       />
 
       <DialogCreateObjective
