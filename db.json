@@ -364,8 +364,9 @@
       },
       "name": "Estruturar equipe de suporte e atendimento",
       "typePercent": 0,
-      "progress": 25,
-      "id": "6325a4e5-cfe4-4bf3-9d2e-192101e99097"
+      "progress": 69,
+      "id": "6325a4e5-cfe4-4bf3-9d2e-192101e99097",
+      "tasks": []
     },
     {
       "type": "percent",
@@ -377,7 +378,7 @@
       },
       "name": "Notificar clientes referente ao novo atendimento para a região sudeste",
       "typePercent": 0,
-      "progress": 0,
+      "progress": 37,
       "id": "a62f91df-6fe1-4d13-8dc0-a09630bc7fe5",
       "tasks": []
     }

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, forwardRef } from 'react'
 
 import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
@@ -20,6 +20,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContentText from '@mui/material/DialogContentText'
 import LoadingButton from '@mui/lab/LoadingButton';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
@@ -44,6 +46,19 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer, handleShowMes
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false)
   const [KRToDelete, setKRToDelete] = useState({})
   const [confirmedDeleteKR, setConfirmedDeleteKR] = useState(false)
+  const [message, setMessage] = useState({ show: false, type: null, text: ''})
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setMessage({ show: false, type: null, text: ''});
+  };
+
+  const Alert = forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
 
   const handleCheckTask = (indexKR, indexTask) => (event) => {
     let KRsToCheck = KRs
@@ -108,10 +123,43 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer, handleShowMes
 
   })
 
-  const handleChangeProgress = (event, newValue) => {
-
+  const handleSaveProgress = (kr, index) => (event, newValue) => {
     let newProgress = progress
-    newProgress[parseFloat(event.target.name)] = newValue
+    let oldValue = kr.progress
+    newProgress[index] = newValue
+
+    setProgress(newProgress)
+    setUpdateProgress(Math.random())
+
+    axios.put("http://localhost:5000/krs/" + kr.id, { ...kr, ...{ progress: newValue } })
+      .then((response) => {
+        if (!Object.keys(response.data).length) {
+          newProgress[index] = oldValue
+          setProgress(newProgress)
+          setUpdateProgress(Math.random())
+          setMessage({
+            show: true,
+            type: 'error',
+            text: 'Erro ao salvar KR, tente novamente mais tarde.'
+          });
+        }
+      })
+      .catch((response) => {
+        console.log(response.err)
+        newProgress[index] = oldValue
+        setProgress(newProgress)
+        setUpdateProgress(Math.random())
+        setMessage({
+          show: true,
+          type: 'error',
+          text: 'Erro ao salvar objetivo, tente novamente mais tarde.'
+        });
+      })
+  }
+
+  const handleChangeProgress = (index) => (event, newValue) => {
+    let newProgress = progress
+    newProgress[index] = newValue
 
     setProgress(newProgress)
     setUpdateProgress(Math.random())
@@ -245,9 +293,9 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer, handleShowMes
                       <Grid container sx={{ width: '100%', alignItems: 'flex-end' }}>
                         <Grid xs sx={{ pr: 2 }}>
                           <Slider
-                            value={typeof progress[indexKR] === 'number' ? progress[indexKR] : 0}
-                            onChange={handleChangeProgress}
-                            name={`${indexKR}`}
+                            value={progress[indexKR] ?? 0}
+                            onChange={handleChangeProgress(indexKR)}
+                            onChangeCommitted={handleSaveProgress(kr, indexKR)}
                             aria-label="Default"
                           />
                         </Grid>
@@ -340,7 +388,13 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer, handleShowMes
           </DialogActions>
         </Dialog>
 
+        <Snackbar open={message && message.show} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+          <Alert onClose={handleCloseSnackbar} severity={(message && message.type) ? message.type : 'info'} sx={{ width: '100%' }}>
+            {(message && message.text) ? message.text : ''}
+          </Alert>
+        </Snackbar>
       </Box>
+
     }
     </DrawerCustom>
   )
