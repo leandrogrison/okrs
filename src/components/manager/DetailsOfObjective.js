@@ -66,6 +66,31 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer, handleShowMes
 
     setKRs(KRsToCheck)
     setUpdateTasks(Math.random())
+
+    axios.put("http://localhost:5000/krs/" + KRsToCheck[indexKR].id, { ...KRsToCheck[indexKR] })
+      .then((response) => {
+        if (!Object.keys(response.data).length) {
+          KRsToCheck[indexKR].tasks[indexTask].checked = !event.target.checked
+          setKRs(KRsToCheck)
+          setUpdateTasks(Math.random())
+          setMessage({
+            show: true,
+            type: 'error',
+            text: 'Erro ao salvar KR, tente novamente mais tarde.'
+          });
+        }
+      })
+      .catch((response) => {
+        console.log(response.err)
+        KRsToCheck[indexKR].tasks[indexTask].checked = !event.target.checked
+        setKRs(KRsToCheck)
+        setUpdateTasks(Math.random())
+        setMessage({
+          show: true,
+          type: 'error',
+          text: 'Erro ao salvar KR, tente novamente mais tarde.'
+        });
+      })
   }
 
   const handleOpenDeleteConfirmation = (kr) => {
@@ -152,7 +177,7 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer, handleShowMes
         setMessage({
           show: true,
           type: 'error',
-          text: 'Erro ao salvar objetivo, tente novamente mais tarde.'
+          text: 'Erro ao salvar KR, tente novamente mais tarde.'
         });
       })
   }

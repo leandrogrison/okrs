@@ -366,7 +366,28 @@
       "typePercent": 0,
       "progress": 69,
       "id": "6325a4e5-cfe4-4bf3-9d2e-192101e99097",
-      "tasks": []
+      "tasks": [
+        {
+          "id": "c6f415a1-9ac4-4d11-b6c9-e7b7e387b2e7",
+          "name": "Anunciar vagas de CS para a região",
+          "checked": true
+        },
+        {
+          "id": "24f50be5-3296-405f-9468-e8ce6b477366",
+          "name": "Efetuar as contratações com base nos candidatos que mais se adequam as vagas",
+          "checked": false
+        },
+        {
+          "id": "7b5232c8-3710-499e-833e-90fee7ed9b24",
+          "name": "Treinar equipe para atuação dentro do trimestre",
+          "checked": false
+        },
+        {
+          "id": "9af0a005-325b-4814-b435-fe07cfb7c0cf",
+          "name": "Início do projeto piloto de suporte e atendimento na região",
+          "checked": false
+        }
+      ]
     },
     {
       "type": "percent",
