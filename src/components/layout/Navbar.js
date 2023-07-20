@@ -18,18 +18,18 @@ import MenuItem from '@mui/material/MenuItem';
 import { UserContext } from '../user/UserAuth';
 
 const pages = [
-  {
-    name: 'Dashboard',
-    url: '/'
-  },
+  // {
+  //   name: 'Dashboard',
+  //   url: '/'
+  // },
   {
     name: 'Gestão dos OKRs',
     url: '/manager'
   },
-  {
-    name: 'Meus OKRs',
-    url: '/MyOKRs'
-  }
+  // {
+  //   name: 'Meus OKRs',
+  //   url: '/MyOKRs'
+  // }
 ];
 const settings = ['Meu perfil', 'Sair'];
 

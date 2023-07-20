@@ -7,7 +7,7 @@ import '@fontsource/roboto/700.css';
 import './App.css';
 
 // COMPONENTS
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 // MATERIAL UI
 import CssBaseline from '@mui/material/CssBaseline';
@@ -17,7 +17,7 @@ import NavBar from './components/layout/Navbar';
 import ContainerPages from "./components/layout/ContainerPages";
 
 // PAGES
-import Dashboard from './components/pages/Dashboard';
+// import Dashboard from './components/pages/Dashboard';
 import OKRsManager from './components/pages/OKRsManager';
 import MyOKRs from './components/pages/MyOKRs';
 
@@ -31,7 +31,8 @@ function App() {
           <NavBar />
           <ContainerPages>
             <Routes>
-              <Route path="/" element={<Dashboard />} />
+              <Route path="/" element={<Navigate to="/manager" replace={true} />} />
+              {/* <Route path="/manager" element={<Dashboard />} /> */}
               <Route path="/manager" element={<OKRsManager />} />
               <Route path="/myokrs" element={<MyOKRs />} />
             </Routes>
