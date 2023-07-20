@@ -1,5 +1,5 @@
 import moment from 'moment/moment';
-import { useState, useEffect, forwardRef, useContext } from 'react'
+import { useState, useEffect, forwardRef, useContext, useReducer } from 'react'
 import axios from 'axios';
 
 // MATERIAL UI
@@ -125,6 +125,37 @@ function OKRsManager() {
 
   const handleSearchByName = (event) => {
     setSearchValue(event.target.value)
+  }
+
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+
+  const findObjectives = (objs, objective) => {
+    objs.forEach((obj) => {
+      if (obj.id === objective.id) {
+        obj.conclusionPercent = objective.conclusionPercent
+        obj.numberOfKRs = objective.numberOfKRs
+      }
+      if (obj.children) findObjectives(obj.children, objective)
+    })
+    return objs;
+  };
+
+  const updateObjective = (objective) => {
+    let objectivesToUpdate = findObjectives(objectives, objective)
+    delete objective.children
+    axios.put("http://localhost:5000/objectives/" + objective.id, objective)
+    .then((response) => {
+      setObjectives(objectivesToUpdate)
+      forceUpdate()
+      })
+      .catch((response) => {
+        console.log(response.err)
+        setMessage({
+          show: true,
+          type: 'error',
+          text: 'Erro ao salvar KR, tente novamente mais tarde.'
+        });
+      })
   }
 
   const handleChange = (event) => {
@@ -419,7 +450,6 @@ function OKRsManager() {
               <Box>
                 <Tabs value={viewSelected} onChange={handleChangeViewMode} aria-label="Modo de visualização dos objetivos">
                   <Tab label="Objetivos" {...a11yProps(0)} />
-                  <Tab label="Mapa estratégico" {...a11yProps(1)} />
                 </Tabs>
               </Box>
               <FormControl sx={{ width: '30%' }} variant="outlined">
@@ -458,9 +488,6 @@ function OKRsManager() {
                 />
               }
             </TabPanel>
-            <TabPanel value={viewSelected} index={1}>
-              Item Two
-            </TabPanel>
           </Box>
         </Grid>
       </Grid>
@@ -471,6 +498,7 @@ function OKRsManager() {
         objective={detailsOfObjective}
         handleCloseDrawer={closeDrawer}
         handleShowMessage={showMessage}
+        handleUpdateObjective={updateObjective}
       />
 
       <DialogCreateObjective

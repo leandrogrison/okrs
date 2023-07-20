@@ -126,7 +126,7 @@ TextMaskCustom.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handleUpdateKR }) {
+function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handleUpdateKR, handleUpdateNumberOfKRs }) {
 
   const [openDropdownOwner, setOpenDropdownOwner] = useState(false);
   const [users, setUsers] = useState([]);
@@ -353,6 +353,7 @@ function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handle
         setLoading(false)
         setSendForm(false)
         if (Object.keys(response.data).length) {
+          handleUpdateNumberOfKRs()
           setMessage({
             show: true,
             type: 'success',
@@ -379,7 +380,7 @@ function DialogCreateKR({ opened, KRToEdit, objective, handleCloseDialog, handle
         });
       })
     }
-  }, [sendForm, kr, KRToEdit, handleClose, handleUpdateKR])
+  }, [sendForm, kr, KRToEdit, handleClose, handleUpdateKR, handleUpdateNumberOfKRs])
 
   const saveKR = () => {
 

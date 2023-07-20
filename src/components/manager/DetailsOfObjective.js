@@ -33,8 +33,13 @@ import SaveIcon from '@mui/icons-material/Save';
 
 import DrawerCustom from '../general/DrawerCustom';
 import DialogCreateKR from './DialogCreateKR';
+import ChartDonut from '../general/ChartDonut';
+import getProgressStatus from '../general/StatusOfObjectives';
+import getColorProgress from '../general/ColorOfStatus';
+import daysToEnd from '../general/DaysToEnd';
+import convertDate from '../general/ConvertDate';
 
-function DetailsOfObjective({opened, objective, handleCloseDrawer, handleShowMessage}) {
+function DetailsOfObjective({opened, objective, handleCloseDrawer, handleShowMessage, handleUpdateObjective}) {
 
   const [descriptionTruncate, setDescriptionTruncate] = useState(true)
   const [KRs, setKRs] = useState([])
@@ -43,6 +48,7 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer, handleShowMes
   const [progress, setProgress] = useState([])
   const [updateProgress, setUpdateProgress] = useState(Math.random())
   const [updateTasks, setUpdateTasks] = useState(Math.random())
+  const [updateObjective, setUpdateObjective] = useState(false)
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false)
   const [KRToDelete, setKRToDelete] = useState({})
   const [confirmedDeleteKR, setConfirmedDeleteKR] = useState(false)
@@ -59,6 +65,16 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer, handleShowMes
   const Alert = forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
   });
+
+  const updateNumberOfKRs = () => {
+    const numberOfKRs = Object.keys(KRToEdit).length ? KRs.length : KRs.length + 1
+    const incrementProgress = Object.keys(KRToEdit).length ? progress : progress.push(0)
+    const sumPercentOfKRs = progress.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+    const conclusionPercentOfObjective = (sumPercentOfKRs / progress.length) || 0;
+
+    setProgress(incrementProgress)
+    handleUpdateObjective({ ...objective, conclusionPercent: conclusionPercentOfObjective, numberOfKRs: numberOfKRs })
+  }
 
   const handleCheckTask = (indexKR, indexTask) => (event) => {
     let KRsToCheck = KRs
@@ -104,6 +120,14 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer, handleShowMes
     setConfirmedDeleteKR(false);
   }
 
+  const handleGetProgressStatus = (objective) => {
+    return getProgressStatus(objective);
+  }
+
+  const handleGetColorProgress = (status) => {
+    return getColorProgress(status);
+  }
+
   useEffect(() => {
     if (!confirmedDeleteKR) return
 
@@ -112,14 +136,25 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer, handleShowMes
       let KRsWithoutDeleted = KRs.filter( KR => KR.id !== KRToDelete.id )
       setKRs(KRsWithoutDeleted)
       getEachProgressOfKRs(KRsWithoutDeleted)
+      setUpdateObjective(true)
       handleShowMessage({ show: true, type: 'success', text: `KR excluído com sucesso!`});
       handleCloseDeleteConfirmation();
+
     })
     .catch(() => {
       handleShowMessage({ show: true, type: 'error', text: `Erro ao excluir KR, tente novamente mais tarde.`});
       handleCloseDeleteConfirmation();
     })
   })
+
+  useEffect(() => {
+    if (!updateObjective) return
+
+    const sumPercentOfKRs = progress.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+    const conclusionPercentOfObjective = (sumPercentOfKRs / progress.length) || 0;
+    handleUpdateObjective({ ...objective, conclusionPercent: conclusionPercentOfObjective, numberOfKRs: KRs.length})
+    setUpdateObjective(false)
+  }, [updateObjective, handleUpdateObjective, objective, progress, KRs])
 
   function getEachProgressOfKRs(data) {
     setProgress(data.map((KR) => { return KR.progress }))
@@ -151,35 +186,47 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer, handleShowMes
   const handleSaveProgress = (kr, index) => (event, newValue) => {
     let newProgress = progress
     let oldValue = kr.progress
+    let updateKRs = KRs
+
     newProgress[index] = newValue
+    updateKRs[index].progress = newValue
+
+    const sumPercentOfKRs = newProgress.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+    const conclusionPercentOfObjective = (sumPercentOfKRs / KRs.length) || 0;
 
     setProgress(newProgress)
+    setKRs(updateKRs)
     setUpdateProgress(Math.random())
-
+    
     axios.put("http://localhost:5000/krs/" + kr.id, { ...kr, ...{ progress: newValue } })
-      .then((response) => {
-        if (!Object.keys(response.data).length) {
-          newProgress[index] = oldValue
-          setProgress(newProgress)
-          setUpdateProgress(Math.random())
-          setMessage({
-            show: true,
-            type: 'error',
-            text: 'Erro ao salvar KR, tente novamente mais tarde.'
-          });
-        }
-      })
-      .catch((response) => {
-        console.log(response.err)
+    .then((response) => {
+      handleUpdateObjective({ ...objective, conclusionPercent: conclusionPercentOfObjective, numberOfKRs: KRs.length })
+      if (Object.keys(response.data).length === 0) {
         newProgress[index] = oldValue
+        updateKRs[index].progress = oldValue
         setProgress(newProgress)
+        setKRs(updateKRs)
         setUpdateProgress(Math.random())
         setMessage({
           show: true,
           type: 'error',
           text: 'Erro ao salvar KR, tente novamente mais tarde.'
         });
-      })
+      }
+    })
+    .catch((response) => {
+      console.log(response.err)
+      newProgress[index] = oldValue
+      updateKRs[index].progress = oldValue
+      setProgress(newProgress)
+      setKRs(updateKRs)
+      setUpdateProgress(Math.random())
+      setMessage({
+        show: true,
+        type: 'error',
+        text: 'Erro ao salvar KR, tente novamente mais tarde.'
+      });
+    })
   }
 
   const handleChangeProgress = (index) => (event, newValue) => {
@@ -272,7 +319,24 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer, handleShowMes
           </Box>
         </Grid>
         <Box sx={{
-          my: 2,
+          p: 2,
+          borderTop: '1px solid',
+          borderColor: 'divider',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1
+        }}>
+          <ChartDonut objective={objective} status={handleGetColorProgress(handleGetProgressStatus(objective))} />
+          <Box>
+            Percentual de conclusão
+            <Tooltip title={'Prazo: ' + convertDate(objective.deadline)} placement="top-end">
+              <Typography sx={{ mb: .5, fontSize: '0.8em'}}>
+                Restam {daysToEnd(objective.deadline)} dias
+              </Typography>
+            </Tooltip>
+          </Box>
+        </Box>
+        <Box sx={{
           borderTop: '1px solid',
           borderColor: 'divider'
         }}>
@@ -379,6 +443,7 @@ function DetailsOfObjective({opened, objective, handleCloseDrawer, handleShowMes
           objective={objective}
           handleCloseDialog={closeDialog}
           handleUpdateKR={getKRs}
+          handleUpdateNumberOfKRs={updateNumberOfKRs}
         />
 
         <Dialog

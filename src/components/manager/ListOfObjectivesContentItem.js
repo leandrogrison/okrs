@@ -1,4 +1,3 @@
-import moment from 'moment/moment';
 import axios from 'axios';
 import { useEffect, useState, useCallback, useMemo } from "react"
 import styles from './ListOfObjectivesContentItem.module.scss'
@@ -33,6 +32,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
 
+import getProgressStatus from '../general/StatusOfObjectives';
+import getColorProgress from '../general/ColorOfStatus';
+import daysToEnd from '../general/DaysToEnd';
+import convertDate from '../general/ConvertDate';
+
 const customChip = createTheme({
   components: {
     MuiChip: {
@@ -54,49 +58,8 @@ function getKRsFinished (krs) {
   return (krs.filter((kr) => kr.finished === 1 )).length
 }
 
-function getColorProgress (status) {
-  let result = 'secondary'
-  if (status === 'on-time') {
-    result = 'success'
-  } else if (status === 'alert') {
-    result = 'warning'
-  } else if (status === 'out-time') {
-    result = 'error'
-  }
-  return result
-}
-
-function getProgressStatus (objective) {
-  if (!objective.conclusionPercent) {
-    objective.conclusionPercent = 0
-  }
-
-  let status = ''
-  let daysTotal = Math.abs(moment(objective.startDate).diff(objective.deadline, 'days'))
-  let expectedDays = Math.abs(moment(objective.startDate).diff(objective.endDate ? moment(objective.endDate) : moment(), 'days'))
-  let expectedValue = expectedDays / daysTotal * 100
-
-  if (objective.conclusionPercent >= expectedValue || objective.conclusionPercent >= 100) {
-    status = 'on-time'
-  } else if (objective.conclusionPercent >= (0.75 * expectedValue)) {
-    status = 'alert'
-  } else {
-    status = 'out-time'
-  }
-
-  return status
-}
-
-function daysToEnd(deadline) {
-  return Math.abs(moment().diff(deadline, 'days'))
-}
-
 function convertDecimals(value) {
-  return value.toString().replace('.', ',')
-}
-
-function convertDate(date) {
-  return moment(date).format('DD/MM/YYYY')
+  return (Math.round(value * 10) / 10).toString().replace('.', ',')
 }
 
 function ListOfObjectivesContentItem({ objective, handleUpdateObjectives, handleShowDetailsOfObjective, handleEditObjective, handleShowMessage }) {
@@ -134,6 +97,14 @@ function ListOfObjectivesContentItem({ objective, handleUpdateObjectives, handle
 
   const handleCloseDeleteConfirmation = () => {
     setOpenDeleteConfirmation(false);
+  }
+
+  const handleGetProgressStatus = (objective) => {
+    return getProgressStatus(objective);
+  }
+
+  const handleGetColorProgress = (status) => {
+    return getColorProgress(status);
   }
 
   const deleteObjective = useCallback((objectiveToDelete) => {
@@ -244,19 +215,20 @@ function ListOfObjectivesContentItem({ objective, handleUpdateObjectives, handle
                   Restam {daysToEnd(objective.deadline)} dias
                 </Typography>
               </Tooltip>
-              <LinearProgress variant="determinate" value={objective.conclusionPercent} color={getColorProgress(getProgressStatus(objective))} sx={{ width: '200px', height: '8px' }} />
+              <LinearProgress variant="determinate" value={objective.conclusionPercent} color={handleGetColorProgress(handleGetProgressStatus(objective))} sx={{ width: '200px', height: '8px' }} />
               {(objective.krs && objective.krs.length) &&
                 <Typography sx={{ mt: .5, fontSize: '0.8em', textAlign: 'right' }}>
                   {getKRsFinished(objective.krs)} de {objective.krs.length} KRs completos
                 </Typography>
               }
-              {(!objective.krs || objective.krs.length === 0) &&
-                <Typography sx={{ mt: .5, fontSize: '0.8em', textAlign: 'right' }}>
-                  Nenhum KR cadastrado
-                </Typography>
-              }
+              <Typography sx={{ mt: .5, fontSize: '0.8em', textAlign: 'right' }}>
+                {(!objective.numberOfKRs || objective.numberOfKRs === 0) ?
+                  <>Nenhum KR cadastrado</> :
+                  <>{objective.numberOfKRs} KR{objective.numberOfKRs > 1 && 's'} cadastrado{objective.numberOfKRs > 1 && 's'}</>
+                }
+              </Typography>
             </Box>
-            <Typography color={getColorProgress(getProgressStatus(objective)) + '.main'} sx={{ fontWeight: 'bold', ml: 1, width: '2.5em', textAlign: 'right' }}>
+            <Typography color={handleGetColorProgress(handleGetProgressStatus(objective)) + '.main'} sx={{ fontWeight: 'bold', ml: 1, width: '2.5em', textAlign: 'right' }}>
               {convertDecimals(objective.conclusionPercent)}%
             </Typography>
           </Box>
