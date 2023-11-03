@@ -15,13 +15,13 @@ npm install
 Por ser um projeto apenas de frontend, foi usada a biblioteca JSON Server para simular um backend (API Rest):
 
 ```sh
-npm npm run backend
+npm run backend
 ```
 
 Na pasta do projeto execute:
 
 ```sh
-npm npm run start
+npm run start
 ```
 
 Uma aba será aberta em seu browser com a aplicação em execução, caso não abra automaticamente, acesse manualmente em seu browser pela URL: http://localhost:3000
