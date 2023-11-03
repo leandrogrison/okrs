@@ -8,15 +8,21 @@ O projeto escolhido para estudos foi em criar um aplicativo/sistema web baseado 
 
 Baixe o projeto para seu ambiente local e instale as dependências:
 
-### `npm install`
+```sh
+npm install
+```
 
 Por ser um projeto apenas de frontend, foi usada a biblioteca JSON Server para simular um backend (API Rest):
 
-### `npm run backend`
+```sh
+npm npm run backend
+```
 
 Na pasta do projeto execute:
 
-### `npm run start`
+```sh
+npm npm run start
+```
 
 Uma aba será aberta em seu browser com a aplicação em execução, caso não abra automaticamente, acesse manualmente em seu browser pela URL: http://localhost:3000
 
